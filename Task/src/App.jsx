@@ -1,9 +1,15 @@
+import {BrowserRouter, Routes, Route} from "react-router-dom";
+import Circle from "./component/Circle";
 
 function App() {
 
   return (
     <>
-     <h1>Task</h1>
+     <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Circle/>} />
+      </Routes>
+     </BrowserRouter>
     </>
   )
 }
