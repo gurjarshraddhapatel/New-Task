@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState, useRef, useEffect } from 'react'
 
 const Circle = () => {
@@ -8,7 +7,7 @@ const Circle = () => {
     useEffect(()=>{
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        reqAnimationofcircle(()=> drawCircles(ctx, circle));
+        requestAnimationFrame(()=> drawCircles(ctx, circle));
     },[circle]);
 
     const drawCircles = (ctx, circle) => {
@@ -28,7 +27,7 @@ const Circle = () => {
         const canvasReact = canvasRef.current.getBoundingClientRect();
         const x = e.clientX - canvasReact.left;
         const y = e.clientY - canvasReact.top;
-        addCircle(x,y)
+        addCircle(x,y);
 
     }
 
@@ -56,11 +55,11 @@ const Circle = () => {
 
      const getRandomColor = () => {
         const letters =  '0123456789ABCDEF';
-        color = '#'
+        let color = '#'
         for (let i = 0; i < 6; i++) {
             color += letters[Math.floor(Math.random() * 16)];
         }
-            return color
+            return color;
      }   
 
   return (
@@ -68,10 +67,10 @@ const Circle = () => {
       <h1>cicle</h1>
       <div className="circle container">
             <canvas>
-                ref = {}
+                ref = {canvasRef}
                 width={500}
                 heigh={500}
-                
+                onClick={(e) =>handleCanvas(e) }
             </canvas>
       </div>
     </div>
