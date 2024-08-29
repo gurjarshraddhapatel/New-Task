@@ -1,80 +1,84 @@
-import { useState, useRef, useEffect } from 'react'
+import  { useState, useRef, useEffect } from 'react';
 
 const Circle = () => {
-    const [circle, setCircle] = useState([]);
-    const canvasRef = useRef(null);
+  const [circles, setCircles] = useState([]);
+  const canvasRef = useRef(null);
 
-    useEffect(()=>{
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        requestAnimationFrame(()=> drawCircles(ctx, circle));
-    },[circle]);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
 
-    const drawCircles = (ctx, circle) => {
-        ctx.clearReact(0,0,ctx.canvas.width,
-        ctx.canvas.height);
-        circle.forEach(circle => {
-            ctx.beginPath();
-            ctx.arc(circle.x, circle.y,circle.radius, 0, Math.PI*2,
-            false)
-            ctx.fillStyle = circle.color;
-            ctx.fill();
-            ctx.stroke();
-        });
+    const drawCircles = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      circles.forEach(circle => {
+        context.beginPath();
+        context.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+        context.fillStyle = circle.color;
+        context.fill();
+      });
     };
 
-    const handleCanvas = (e) =>{
-        const canvasReact = canvasRef.current.getBoundingClientRect();
-        const x = e.clientX - canvasReact.left;
-        const y = e.clientY - canvasReact.top;
-        addCircle(x,y);
+    drawCircles();
+  }, [circles]);
 
+  const handleCanvasClick = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const radius = Math.random() * 40 + 10;
+    const color = getRandomColor();
+
+    const newCircle = { x, y, radius, color };
+    setCircles(prevCircles => {
+      const updatedCircles = [...prevCircles, newCircle];
+      return detectOverlap(updatedCircles);
+    });
+  };
+
+  const getRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
     }
+    return color;
+  };
 
-    const addCircle = (x,y)=>{
-        const radius = Math.floor(Math.random()*42) + 10
-        const color = getRandomColor();
-        const newCircle = {x,y, radius,color};
-        setCircle((PrevCircle ) =>{
-            checkOverlap(newCircle, PrevCircle);
-            return [...PrevCircle, newCircle]
-        })
-    }
-
-    const checkOverlap = (circle, circles) =>{
-        for (let i = 0; i < circles.length; i++) {
-            const otherCircle = circles[i]
-            const dx = circle.x - otherCircle.x
-            const dy = circle.y - otherCircle.y
-            const distance = Math.sqrt(dx*dx+dy*dy)
-            if (distance < circle.radius + otherCircle.radius) {
-                circle.color = 'blue'
-                otherCircle.color = 'blue'
-    }
-        }}
-
-     const getRandomColor = () => {
-        const letters =  '0123456789ABCDEF';
-        let color = '#'
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
+  const detectOverlap = (circles) => {
+    return circles.map(circle1 => {
+      let overlapping = false;
+      for (let i = 0; i < circles.length; i++) {
+        const circle2 = circles[i];
+        if (circle1 !== circle2) {
+          const distance = Math.sqrt(
+            (circle1.x - circle2.x) ** 2 + (circle1.y - circle2.y) ** 2
+          );
+          if (distance < circle1.radius + circle2.radius) {
+            overlapping = true;
+            break;
+          }
         }
-            return color;
-     }   
+      }
+      return {
+        ...circle1,
+        color: overlapping ? 'red' : circle1.color
+      };
+    });
+  };
 
   return (
-    <div className='container px-3 py-3'>
-      <h1>cicle</h1>
-      <div className="circle container">
-            <canvas>
-                ref = {canvasRef}
-                width={500}
-                heigh={500}
-                onClick={(e) =>handleCanvas(e) }
-            </canvas>
-      </div>
+    <div>
+      <canvas
+        ref={canvasRef}
+        width={800}
+        height={600}
+        style={{ border: '1px solid black' }}
+        onClick={handleCanvasClick}
+      />
+      <p>Click on the canvas to add circles. Circles will turn red if they overlap.</p>
     </div>
-  )
-}
+  );
+};
 
-export default Circle
+export default Circle;
