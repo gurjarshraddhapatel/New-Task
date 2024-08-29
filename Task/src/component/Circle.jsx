@@ -68,15 +68,16 @@ const Circle = () => {
   };
 
   return (
-    <div>
+    <div className='container-fluid mt-5 text-center '>
+        <h1>Click on the entire page  to create circles!</h1>
+
       <canvas
         ref={canvasRef}
-        width={800}
-        height={600}
-        style={{ border: '1px solid black' }}
+        width={1600}
+        height={680}
         onClick={handleCanvasClick}
       />
-      <p>Click on the canvas to add circles. Circles will turn red if they overlap.</p>
+     
     </div>
   );
 };
